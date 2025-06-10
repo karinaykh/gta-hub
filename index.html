@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GTA Resource Hub | HKUST</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        // Customizing Tailwind theme to add HKUST colors
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        'hkust-blue': '#003366',
+                        'hkust-blue-light': '#0066cc',
+                        'accent': '#ff6b35',
+                        'success': '#4CAF50',
+                        'info': '#2196F3',
+                        'purple': '#9C27B0',
+                        'warning': '#FF5722',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Small CSS additions for polish */
+        .page { display: none; }
+        .page.active { display: block; }
+        .tag-filter.active, .category-btn.active.featured { background-color: #003366; color: white; border-color: #003366; }
+        .category-btn.active.start-journey { background-color: #4CAF50; color: white; border-color: #4CAF50; }
+        .category-btn.active.teach-engage { background-color: #2196F3; color: white; border-color: #2196F3; }
+        .category-btn.active.master-tools { background-color: #9C27B0; color: white; border-color: #9C27B0; }
+        .category-btn.active.grade-challenges { background-color: #FF5722; color: white; border-color: #FF5722; }
+        .spinner {
+            border: 3px solid rgba(0,0,0,0.1);
+            border-top-color: #003366;
+            width: 30px;
+            height: 30px;
+        }
+        .link-filter-btn.active {
+             background-color: #003366;
+             color: white;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans antialiased">
+
+    <!-- Header -->
+    <header class="bg-white/80 backdrop-blur-lg border-b border-gray-200 sticky top-0 z-50">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Site Title & Logos -->
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-2">
+                        <div class="bg-hkust-blue text-white text-xs font-bold h-8 w-8 flex items-center justify-center rounded-md">HKUST</div>
+                        <div class="bg-gray-200 text-hkust-blue text-xs font-bold h-8 w-8 flex items-center justify-center rounded-md">CEI</div>
+                    </div>
+                    <a href="#" class="text-xl font-bold text-hkust-blue" onclick="showSection('home')">GTA Resource Hub</a>
+                </div>
+
+                <!-- Desktop Navigation -->
+                <nav class="hidden md:flex items-center gap-2">
+                    <button class="nav-btn text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-hkust-blue px-3 py-2 rounded-md transition-colors" data-section="home">Home</button>
+                    <button class="nav-btn text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-hkust-blue px-3 py-2 rounded-md transition-colors" data-section="library">Resource Library</button>
+                    <button class="nav-btn text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-hkust-blue px-3 py-2 rounded-md transition-colors" data-section="links">Useful Links</button>
+                    <button class="nav-btn text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-hkust-blue px-3 py-2 rounded-md transition-colors" data-section="about">About</button>
+                </nav>
+
+                <!-- User Info & Mobile Menu Button -->
+                <div class="flex items-center gap-4">
+                     <div class="hidden sm:flex items-center gap-2 text-sm text-gray-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        <span>Sarah Chen (GTA)</span>
+                    </div>
+                    <button id="mobile-menu-btn" class="md:hidden p-2 rounded-md text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-hkust-blue">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+                    </button>
+                </div>
+            </div>
+            <!-- Mobile Navigation -->
+            <div id="mobile-menu" class="hidden md:hidden pb-4">
+                <nav class="flex flex-col gap-2 mt-2">
+                    <button class="nav-btn text-left font-medium text-gray-600 hover:bg-gray-100 hover:text-hkust-blue px-3 py-2 rounded-md transition-colors" data-section="home">Home</button>
+                    <button class="nav-btn text-left font-medium text-gray-600 hover:bg-gray-100 hover:text-hkust-blue px-3 py-2 rounded-md transition-colors" data-section="library">Resource Library</button>
+                    <button class="nav-btn text-left font-medium text-gray-600 hover:bg-gray-100 hover:text-hkust-blue px-3 py-2 rounded-md transition-colors" data-section="links">Useful Links</button>
+                    <button class="nav-btn text-left font-medium text-gray-600 hover:bg-gray-100 hover:text-hkust-blue px-3 py-2 rounded-md transition-colors" data-section="about">About</button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+        
+        <!-- Home Page -->
+        <section id="home" class="page active">
+            <div class="text-center mb-12">
+                <h1 class="text-4xl md:text-5xl font-extrabold text-hkust-blue mb-4">GTA Resource Hub</h1>
+                <p class="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">Your comprehensive guide to excellence in teaching. Find resources, tools, and guidance crafted by GTAs, for GTAs.</p>
+            </div>
+            <div class="max-w-2xl mx-auto mb-12">
+                <div class="relative">
+                    <input type="text" id="home-search" placeholder="Search resources, topics, or tools..." class="w-full pl-5 pr-12 py-4 text-base bg-white border-2 border-gray-200 rounded-full shadow-sm focus:ring-2 focus:ring-hkust-blue focus:border-hkust-blue outline-none transition-all">
+                    <button id="home-search-btn" class="absolute inset-y-0 right-0 flex items-center justify-center w-14 h-full text-white bg-hkust-blue hover:bg-hkust-blue-light rounded-full transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    </button>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="category-grid">
+                <!-- Categories will be loaded here -->
+            </div>
+        </section>
+
+        <!-- Library Page -->
+        <section id="library" class="page">
+             <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-hkust-blue">Resource Library</h2>
+             </div>
+             <!-- Filters Section -->
+            <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm mb-8">
+                 <div class="flex flex-col md:flex-row items-start md:items-center justify-between mb-4 gap-4">
+                    <div class="relative w-full md:w-auto">
+                         <input type="text" id="library-search" placeholder="Filter by keyword..." class="w-full pl-10 pr-4 py-2 text-sm bg-gray-100 border border-gray-300 rounded-lg focus:ring-1 focus:ring-hkust-blue focus:border-hkust-blue outline-none">
+                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    </div>
+                    <div id="tag-filters" class="flex-grow flex flex-wrap items-center gap-2">
+                        <!-- Tag filters will be loaded here -->
+                    </div>
+                     <button id="clear-filters-btn" class="text-sm text-gray-500 hover:text-hkust-blue transition-colors flex-shrink-0">Clear All Filters</button>
+                 </div>
+                 <div id="category-buttons" class="flex flex-wrap gap-2 pt-4 border-t border-gray-200">
+                    <!-- Category buttons will be loaded here -->
+                </div>
+            </div>
+             <!-- Results Header -->
+            <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+                <div id="results-count" class="text-gray-600 font-medium">Loading resources...</div>
+                <select id="sort-select" class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-hkust-blue focus:border-hkust-blue">
+                    <option value="featured">Sort: Featured</option>
+                    <option value="date">Sort: Newest First</option>
+                    <option value="title">Sort: Title A-Z</option>
+                </select>
+            </div>
+             <!-- Loading Spinner -->
+             <div id="loading" class="flex justify-center items-center py-16">
+                 <div class="spinner rounded-full animate-spin"></div>
+             </div>
+             <!-- Resource Grid -->
+            <div id="resource-library-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Resources will be loaded here -->
+            </div>
+             <!-- No Results -->
+            <div id="no-results" class="text-center py-16 text-gray-500 hidden">
+                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 text-gray-400"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <h3 class="text-xl font-semibold text-gray-700">No resources found</h3>
+                <p>Try adjusting your filters or search terms.</p>
+            </div>
+        </section>
+
+        <!-- Resource Detail Page -->
+        <section id="resource-page" class="page">
+            <div class="max-w-4xl mx-auto">
+                <button onclick="goBack()" class="flex items-center gap-2 text-hkust-blue font-medium mb-8 hover:underline">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                    Back to Library
+                </button>
+                <div id="resource-page-content">
+                    <!-- Dynamic resource content will be injected here -->
+                </div>
+            </div>
+        </section>
+        
+        <!-- Useful Links Page -->
+        <section id="links" class="page">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-hkust-blue">Useful Links</h2>
+                <p class="text-lg text-gray-600 mt-2">Quick access to essential HKUST resources and external tools.</p>
+            </div>
+            <!-- Useful Links Filters -->
+            <div class="flex flex-wrap justify-center gap-2 mb-8" id="useful-links-filters">
+                <!-- Link category filters will be loaded here -->
+            </div>
+            <div id="useful-links-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                 <!-- Useful links will be loaded here -->
+            </div>
+        </section>
+
+        <!-- About Page -->
+        <section id="about" class="page">
+            <div class="max-w-3xl mx-auto bg-white p-8 md:p-12 rounded-2xl border border-gray-200 shadow-sm">
+                 <h2 class="text-3xl font-bold text-hkust-blue text-center mb-8">About the GTA Resource Hub</h2>
+                 <div class="prose prose-lg max-w-none text-gray-700">
+                    <h3 class="text-hkust-blue">Our Mission</h3>
+                    <p>The GTA Resource Hub was created by Graduate Teaching Assistants, for Graduate Teaching Assistants at HKUST. Our goal is to provide a centralized, easily accessible collection of teaching resources, best practices, and practical guides that support GTAs in their teaching journey.</p>
+                    
+                    <h3 class="text-hkust-blue">What You'll Find</h3>
+                    <ul>
+                        <li><strong>Practical Guides:</strong> Step-by-step instructions for common teaching tasks</li>
+                        <li><strong>Best Practices:</strong> Proven strategies from experienced GTAs</li>
+                        <li><strong>Technology Resources:</strong> How-to guides for Canvas, Qualtrics, and classroom tech</li>
+                        <li><strong>Communication Tools:</strong> Templates and tips for student interactions</li>
+                    </ul>
+
+                    <h3 class="text-hkust-blue">Acknowledgments</h3>
+                    <p>Special thanks to all the GTAs, faculty members, and staff who contributed materials, feedback, and expertise to make this resource hub possible. This is a community effort, by the community, for the community.</p>
+                    
+                    <h3 class="text-hkust-blue">Support</h3>
+                    <p>For technical support, suggestions, or to contribute new resources, please contact the <strong>Center for Education Innovation (CEI)</strong> at HKUST.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // --- DATA ---
+        // In a real application, this would be fetched from a PHP API
+        const appData = {
+            categories: [
+                { id: "start-journey", name: "Start Your GTA Journey", icon: "🚀", description: "Essential foundations for new GTAs", color: "success" },
+                { id: "teach-engage", name: "Teach & Engage Students", icon: "🎯", description: "Classroom interaction and student engagement", color: "info" },
+                { id: "master-tools", name: "Master Teaching Tools", icon: "💻", description: "Technology platforms and setup guides", color: "purple" },
+                { id: "grade-challenges", name: "Grade & Handle Challenges", icon: "✅", description: "Assessment, feedback, and problem-solving", color: "warning" }
+            ],
+            usefulLinks: [
+                { id: 1, title: "HKUST Canvas LMS", description: "Access the official Canvas Learning Management System.", url: "https://canvas.ust.hk", category: "Learning Management", icon: "🎓" },
+                { id: 2, title: "Center for Education Innovation", description: "Teaching support, professional development, and resources.", url: "https://cei.hkust.edu.hk", category: "Support", icon: "🌟" },
+                { id: 3, title: "Academic Integrity Policy", description: "Official HKUST Academic Integrity guidelines and procedures.", url: "https://registry.hkust.edu.hk/academic-integrity", category: "Policies", icon: "📋" },
+                { id: 4, title: "HKUST Library", description: "Access digital resources, research databases, and support.", url: "https://library.hkust.edu.hk", category: "Academic Resources", icon: "📚" },
+                { id: 5, title: "Student Records & Registration", description: "Academic records, course registration, and student systems.", url: "https://registry.hkust.edu.hk", category: "Administration", icon: "📝" },
+                { id: 6, title: "HKUST IT Services", description: "Technical support, software downloads, and IT resources.", url: "https://itsc.hkust.edu.hk", category: "Technical Support", icon: "💻" },
+            ],
+            resources: [
+                { id: 1, title: "Surviving Office Hours", description: "Six quick best-practice tips for running TA office hours.", category_id: "teach-engage", contributor: "GTA Training Team", file_type: "PDF", file_path: "#", tags: ["Office Hours", "Best Practices", "Student Communication", "Quick Reference"], is_featured: true, difficulty_level: "Beginner", estimated_read_time: "5 minutes", upload_date: "2024-01-15" },
+                { id: 2, title: "Building Effective Working Relationships with Instructors", description: "How to collaborate with course instructors; advice for Finance GTAs.", category_id: "start-journey", contributor: "Finance Department", file_type: "PDF", file_path: "#", tags: ["Finance", "Course Setup", "Best Practices", "Step-by-Step Guide"], is_featured: true, difficulty_level: "Beginner", estimated_read_time: "10 minutes", upload_date: "2024-01-20" },
+                { id: 3, title: "Canvas Quick Guide for GTAs", description: "Cheat-sheet on login, TA roles, assignments, SpeedGrader, and more.", category_id: "master-tools", contributor: "EdTech Team", file_type: "PDF", file_path: "#", tags: ["Canvas", "Quick Reference", "Technology Setup", "Checklist"], is_featured: true, difficulty_level: "Beginner", estimated_read_time: "8 minutes", upload_date: "2024-01-25" },
+                { id: 4, title: "How to Respond to Grade Disputes", description: "Three scripted scenarios for handling grade-appeal conversations.", category_id: "grade-challenges", contributor: "Academic Standards Team", file_type: "Text", tags: ["Grading", "Student Communication", "Best Practices"], is_featured: false, difficulty_level: "Intermediate", estimated_read_time: "12 minutes", upload_date: "2024-02-01" },
+                { id: 5, title: "TA Feedback Guidelines Training", description: "Web-based micro-course with modules on rubrics and scenarios.", category_id: "grade-challenges", contributor: "CEI", file_type: "External Website", external_url: "#", tags: ["Grading", "Interactive Training", "Best Practices"], is_featured: true, difficulty_level: "Intermediate", estimated_read_time: "30 minutes", upload_date: "2024-03-01" },
+                { id: 6, title: "Record Attendance with QR Codes", description: "Walkthrough for QR-based sign-in and pushing scores to Canvas.", category_id: "master-tools", contributor: "EdTech Team", file_type: "PDF", file_path: "#", tags: ["QR Codes", "Canvas", "Qualtrics", "Step-by-Step Guide"], is_featured: false, difficulty_level: "Advanced", estimated_read_time: "18 minutes", upload_date: "2024-02-20" }
+            ]
+        };
+
+        // --- GLOBAL STATE ---
+        let currentFilters = {
+            search: '',
+            category: '',
+            tags: [],
+            showFeatured: false
+        };
+        let currentSort = 'featured';
+        let currentLinkFilter = 'All';
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeApp();
+        });
+
+        function initializeApp() {
+            setupEventListeners();
+            loadCategories();
+            loadUsefulLinks();
+            loadFilters();
+            loadLinkFilters();
+
+            const hash = window.location.hash.substring(1);
+            if (hash && document.getElementById(hash)) {
+                showSection(hash);
+            } else {
+                showSection('home');
+            }
+        }
+
+        // --- EVENT LISTENERS ---
+        function setupEventListeners() {
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const section = e.target.getAttribute('data-section');
+                    showSection(section);
+                    document.getElementById('mobile-menu').classList.add('hidden');
+                });
+            });
+
+            document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+                document.getElementById('mobile-menu').classList.toggle('hidden');
+            });
+            
+            document.getElementById('home-search-btn').addEventListener('click', performHomeSearch);
+            document.getElementById('home-search').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') performHomeSearch();
+            });
+            document.getElementById('library-search').addEventListener('input', () => {
+                currentFilters.search = document.getElementById('library-search').value;
+                applyFiltersAndRender();
+            });
+            
+            document.getElementById('clear-filters-btn').addEventListener('click', clearAllFilters);
+            
+            document.getElementById('sort-select').addEventListener('change', (e) => {
+                currentSort = e.target.value;
+                applyFiltersAndRender();
+            });
+        }
+
+        // --- PAGE/SECTION MANAGEMENT ---
+        function showSection(sectionId) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.getElementById(sectionId)?.classList.add('active');
+
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                const isActive = btn.dataset.section === sectionId;
+                btn.classList.toggle('bg-gray-100', isActive);
+                btn.classList.toggle('text-hkust-blue', isActive);
+            });
+            
+            if (sectionId === 'library') {
+                applyFiltersAndRender();
+            }
+
+            window.history.pushState(null, '', '#' + sectionId);
+        }
+
+        // --- DYNAMIC CONTENT RENDERING ---
+        function loadCategories() {
+            const grid = document.getElementById('category-grid');
+            if(grid) grid.innerHTML = appData.categories.map(cat => `
+                <div onclick="filterByCategory('${cat.id}')" class="group bg-white p-6 rounded-xl border border-gray-200 hover:border-hkust-blue hover:shadow-lg transition-all cursor-pointer">
+                    <div class="flex items-center justify-center h-16 w-16 rounded-full bg-gray-100 group-hover:bg-hkust-blue mb-4 transition-colors">
+                        <span class="text-3xl">${cat.icon}</span>
+                    </div>
+                    <h3 class="font-bold text-lg text-hkust-blue mb-1">${cat.name}</h3>
+                    <p class="text-gray-500 text-sm">${cat.description}</p>
+                </div>
+            `).join('');
+        }
+        
+        function loadUsefulLinks() {
+            const grid = document.getElementById('useful-links-grid');
+            if(!grid) return;
+            
+            const filteredLinks = appData.usefulLinks.filter(link => 
+                currentLinkFilter === 'All' || link.category === currentLinkFilter
+            );
+
+            grid.innerHTML = filteredLinks.map(link => `
+                <a href="${link.url}" target="_blank" rel="noopener noreferrer" class="group block bg-white p-6 rounded-xl border border-gray-200 hover:border-hkust-blue hover:shadow-lg transition-all">
+                    <div class="flex items-start gap-4">
+                         <div class="text-3xl mt-1">${link.icon}</div>
+                         <div>
+                            <h3 class="font-bold text-lg text-hkust-blue group-hover:underline">${link.title}</h3>
+                            <p class="text-gray-500 text-sm mb-2">${link.description}</p>
+                            <span class="text-xs font-medium bg-gray-100 text-gray-600 px-2 py-1 rounded-full">${link.category}</span>
+                         </div>
+                    </div>
+                </a>
+            `).join('');
+        }
+
+        function loadFilters() {
+            // Category filter buttons
+            const categoryContainer = document.getElementById('category-buttons');
+            let categoryButtonsHTML = `
+                <button class="category-btn featured flex items-center gap-2 text-sm font-medium px-4 py-2 border-2 border-gray-200 rounded-full hover:border-hkust-blue transition-colors" data-category="featured">
+                    <span>⭐</span>
+                    <span>Featured</span>
+                </button>
+            `;
+            categoryButtonsHTML += appData.categories.map(cat => `
+                <button class="category-btn ${cat.id} flex items-center gap-2 text-sm font-medium px-4 py-2 border-2 border-gray-200 rounded-full hover:border-hkust-blue transition-colors" data-category="${cat.id}">
+                    <span>${cat.icon}</span>
+                    <span>${cat.name}</span>
+                </button>
+            `).join('');
+            categoryContainer.innerHTML = categoryButtonsHTML;
+            document.querySelectorAll('.category-btn').forEach(btn => btn.addEventListener('click', () => toggleCategory(btn.dataset.category)));
+
+            // Tag filter buttons
+            const allTags = [...new Set(appData.resources.flatMap(r => r.tags))].sort();
+            const tagContainer = document.getElementById('tag-filters');
+            tagContainer.innerHTML = allTags.map(tag => `
+                <button class="tag-filter text-xs font-medium px-3 py-1 border border-gray-300 rounded-full hover:bg-gray-200 transition-colors" data-tag="${tag}">${tag}</button>
+            `).join('');
+            document.querySelectorAll('.tag-filter').forEach(btn => btn.addEventListener('click', () => toggleTag(btn.dataset.tag)));
+        }
+        
+        function loadLinkFilters() {
+            const container = document.getElementById('useful-links-filters');
+            if(!container) return;
+            const linkCategories = ['All', ...new Set(appData.usefulLinks.map(link => link.category))];
+            container.innerHTML = linkCategories.map(cat => `
+                <button class="link-filter-btn px-4 py-2 text-sm font-medium rounded-full transition-colors ${cat === 'All' ? 'active' : 'bg-white text-gray-700 hover:bg-gray-100'}" data-category="${cat}">
+                    ${cat}
+                </button>
+            `).join('');
+            
+            document.querySelectorAll('.link-filter-btn').forEach(btn => btn.addEventListener('click', () => {
+                currentLinkFilter = btn.dataset.category;
+                document.querySelectorAll('.link-filter-btn').forEach(b => b.classList.remove('active', 'bg-white', 'text-gray-700', 'hover:bg-gray-100'));
+                btn.classList.add('active');
+                loadUsefulLinks();
+            }));
+        }
+        
+        function displayResources(resourcesToDisplay) {
+            const grid = document.getElementById('resource-library-grid');
+            grid.innerHTML = resourcesToDisplay.map(res => {
+                return `
+                <div onclick="viewResource(${res.id})" class="bg-white p-6 rounded-xl border border-gray-200 flex flex-col hover:shadow-lg hover:border-hkust-blue transition-all cursor-pointer">
+                    <div class="flex-grow">
+                        ${res.is_featured ? '<div class="text-xs font-bold text-amber-600 mb-2">⭐ FEATURED</div>' : ''}
+                        <h3 class="font-bold text-lg text-hkust-blue mb-2">${res.title}</h3>
+                        <p class="text-gray-500 text-sm mb-4">${res.description}</p>
+                    </div>
+                    <div class="mt-auto">
+                        <div class="flex flex-wrap gap-2 mb-4">
+                             ${res.tags.slice(0, 3).map(tag => `<span class="text-xs font-medium bg-gray-100 text-gray-600 px-2 py-1 rounded-full">${tag}</span>`).join('')}
+                        </div>
+                        <div class="flex justify-between items-center text-xs text-gray-400 pt-4 border-t border-gray-100">
+                            <span>${res.file_type}</span>
+                            <span>${res.estimated_read_time}</span>
+                        </div>
+                    </div>
+                </div>
+            `}).join('');
+        }
+
+        function viewResource(resourceId) {
+            const resource = appData.resources.find(r => r.id === resourceId);
+            if (!resource) return;
+            const category = appData.categories.find(c => c.id === resource.category_id);
+            const contentContainer = document.getElementById('resource-page-content');
+            let resourceHTML = '';
+
+            const headerHTML = `
+                <h1 class="text-3xl font-bold text-hkust-blue mb-2">${resource.title}</h1>
+                <p class="text-gray-600 mb-6">${resource.description}</p>
+                <div class="flex flex-wrap gap-2 mb-6">
+                    ${resource.tags.map(tag => `<span class="text-xs font-medium bg-gray-100 text-gray-600 px-2 py-1 rounded-full">${tag}</span>`).join('')}
+                </div>
+                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-center mb-6">
+                    <div><div class="text-gray-400">Category</div><div class="font-semibold text-gray-700">${category ? category.name : 'N/A'}</div></div>
+                    <div><div class="text-gray-400">Contributor</div><div class="font-semibold text-gray-700">${resource.contributor}</div></div>
+                    <div><div class="text-gray-400">Format</div><div class="font-semibold text-gray-700">${resource.file_type}</div></div>
+                    <div><div class="text-gray-400">Read Time</div><div class="font-semibold text-gray-700">${resource.estimated_read_time}</div></div>
+                </div>
+            `;
+            
+            if (resource.file_type === 'PDF') {
+                resourceHTML = `
+                    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                        <div class="p-8">${headerHTML}</div>
+                        <div class="bg-gray-50 p-8 text-center border-t border-gray-200">
+                             <div class="text-6xl mb-4">📄</div>
+                             <h3 class="text-xl font-bold text-hkust-blue mb-2">PDF Resource</h3>
+                             <p class="text-gray-600 max-w-md mx-auto mb-6">This resource is a downloadable PDF. Click the button below to open it in a new tab.</p>
+                             <a href="${resource.file_path}" target="_blank" class="inline-block bg-hkust-blue text-white font-semibold px-8 py-3 rounded-lg hover:bg-hkust-blue-light transition-colors">
+                                View PDF
+                            </a>
+                        </div>
+                    </div>
+                `;
+            } else if (resource.file_type === 'External Website') {
+                resourceHTML = `
+                     <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden text-center">
+                        <div class="p-8">
+                            <h1 class="text-3xl font-bold text-hkust-blue mb-2">${resource.title}</h1>
+                            <p class="text-gray-600 max-w-lg mx-auto mb-6">${resource.description}</p>
+                             <a href="${resource.external_url}" target="_blank" class="inline-block bg-accent text-white font-semibold px-8 py-3 rounded-lg hover:opacity-90 transition-opacity">
+                                🚀 Launch Interactive Resource
+                            </a>
+                        </div>
+                         <div class="bg-gray-50 p-8 border-t border-gray-200">
+                             <div class="flex flex-wrap gap-2 justify-center">
+                                ${resource.tags.map(tag => `<span class="text-xs font-medium bg-gray-200 text-gray-700 px-2 py-1 rounded-full">${tag}</span>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else { // Default to text-based content
+                resourceHTML = `
+                    <div class="bg-white p-8 md:p-12 rounded-2xl border border-gray-200 shadow-sm">
+                        ${headerHTML}
+                        <div class="prose prose-lg max-w-none text-gray-800 pt-8 border-t border-gray-200">
+                            <h2>Key Guidelines</h2>
+                            <p>This section would contain the full text of the resource, formatted for easy reading. It supports standard HTML elements like headers, paragraphs, and lists.</p>
+                            <ul>
+                                <li>Guideline one: Maintain fairness and neutrality.</li>
+                                <li>Guideline two: Use provided rubrics for consistent grading.</li>
+                                <li>Guideline three: Document student interactions and feedback.</li>
+                            </ul>
+                            <h3>Example Scenario</h3>
+                            <p>Imagine a student disputes a grade. Your first step should be to listen calmly to their perspective before reviewing the rubric and your feedback together. This approach de-escalates tension and focuses on learning.</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            contentContainer.innerHTML = resourceHTML;
+            showSection('resource-page');
+            window.scrollTo(0, 0);
+        }
+        
+        // --- FILTERING & SORTING LOGIC ---
+        function performHomeSearch() {
+            currentFilters.search = document.getElementById('home-search').value;
+            document.getElementById('library-search').value = currentFilters.search;
+            showSection('library');
+        }
+
+        function filterByCategory(categoryId) {
+            currentFilters.category = categoryId;
+            currentFilters.showFeatured = false;
+            showSection('library');
+        }
+
+        function toggleCategory(categoryId) {
+            if (categoryId === 'featured') {
+                currentFilters.showFeatured = !currentFilters.showFeatured;
+                currentFilters.category = ''; // Deselect regular categories
+            } else {
+                currentFilters.category = currentFilters.category === categoryId ? '' : categoryId;
+                currentFilters.showFeatured = false; // Deselect featured
+            }
+            applyFiltersAndRender();
+        }
+
+        function toggleTag(tag) {
+            const index = currentFilters.tags.indexOf(tag);
+            if (index > -1) {
+                currentFilters.tags.splice(index, 1);
+            } else {
+                currentFilters.tags.push(tag);
+            }
+            applyFiltersAndRender();
+        }
+
+        function clearAllFilters() {
+            currentFilters = { search: '', category: '', tags: [], showFeatured: false };
+            document.getElementById('library-search').value = '';
+            applyFiltersAndRender();
+        }
+        
+        function applyFiltersAndRender() {
+            const loading = document.getElementById('loading');
+            const grid = document.getElementById('resource-library-grid');
+            const noResults = document.getElementById('no-results');
+
+            loading.style.display = 'flex';
+            grid.style.display = 'none';
+            noResults.style.display = 'none';
+
+            setTimeout(() => {
+                let filtered = [...appData.resources];
+
+                if (currentFilters.showFeatured) {
+                    filtered = filtered.filter(res => res.is_featured);
+                }
+                if (currentFilters.search) {
+                    const term = currentFilters.search.toLowerCase();
+                    filtered = filtered.filter(res => res.title.toLowerCase().includes(term) || res.description.toLowerCase().includes(term) || res.tags.some(tag => tag.toLowerCase().includes(term)));
+                }
+                if (currentFilters.category) {
+                    filtered = filtered.filter(res => res.category_id === currentFilters.category);
+                }
+                if (currentFilters.tags.length > 0) {
+                    filtered = filtered.filter(res => currentFilters.tags.every(tag => res.tags.includes(tag)));
+                }
+                
+                filtered.sort((a, b) => {
+                    if (currentSort === 'featured') return b.is_featured - a.is_featured || a.title.localeCompare(b.title);
+                    if (currentSort === 'title') return a.title.localeCompare(b.title);
+                    if (currentSort === 'date') return new Date(b.upload_date) - new Date(a.upload_date);
+                    return 0;
+                });
+
+                updateFilterButtons();
+                document.getElementById('results-count').textContent = `${filtered.length} resource${filtered.length !== 1 ? 's' : ''} found`;
+                
+                loading.style.display = 'none';
+                if (filtered.length === 0) {
+                    noResults.style.display = 'block';
+                } else {
+                    grid.style.display = 'grid';
+                    displayResources(filtered);
+                }
+            }, 200);
+        }
+
+        function updateFilterButtons() {
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                const isFeaturedBtn = btn.dataset.category === 'featured';
+                const isCategoryBtn = btn.dataset.category === currentFilters.category;
+                btn.classList.toggle('active', (isFeaturedBtn && currentFilters.showFeatured) || isCategoryBtn);
+            });
+            document.querySelectorAll('.tag-filter').forEach(btn => {
+                btn.classList.toggle('active', currentFilters.tags.includes(btn.dataset.tag));
+            });
+        }
+        
+        function goBack() {
+            showSection('library');
+        }
+
+    </script>
+</body>
+</html>
