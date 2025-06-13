@@ -129,19 +129,21 @@
              </div>
              <!-- Filters Section -->
             <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm mb-8">
-                 <div class="flex flex-col md:flex-row items-start md:items-center justify-between mb-4 gap-4">
-                    <div class="relative w-full md:w-auto">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-4">
+                    <div id="category-buttons" class="flex flex-wrap gap-2">
+                        <!-- Category buttons will be loaded here -->
+                    </div>
+                    <div class="relative w-full md:w-auto md:min-w-[250px]">
                          <input type="text" id="library-search" placeholder="Filter by keyword..." class="w-full pl-10 pr-4 py-2 text-sm bg-gray-100 border border-gray-300 rounded-lg focus:ring-1 focus:ring-hkust-blue focus:border-hkust-blue outline-none">
                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                     </div>
-                    <div id="tag-filters" class="flex-grow flex flex-wrap items-center gap-2">
+                </div>
+                 <div class="flex flex-wrap items-center gap-4 pt-4 border-t border-gray-200">
+                     <div id="tag-filters" class="flex-grow flex flex-wrap items-center gap-2">
                         <!-- Tag filters will be loaded here -->
                     </div>
                      <button id="clear-filters-btn" class="text-sm text-gray-500 hover:text-hkust-blue transition-colors flex-shrink-0">Clear All Filters</button>
                  </div>
-                 <div id="category-buttons" class="flex flex-wrap gap-2 pt-4 border-t border-gray-200">
-                    <!-- Category buttons will be loaded here -->
-                </div>
             </div>
              <!-- Results Header -->
             <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
@@ -230,7 +232,7 @@
         const appData = {
             categories: [
                 { id: "start-journey", name: "Start Your GTA Journey", icon: "🚀", description: "Essential foundations for new GTAs", color: "success" },
-                { id: "teach-engage", name: "Teach & Engage Students", icon: "�", description: "Classroom interaction and student engagement", color: "info" },
+                { id: "teach-engage", name: "Teach & Engage Students", icon: "🎯", description: "Classroom interaction and student engagement", color: "info" },
                 { id: "master-tools", name: "Master Teaching Tools", icon: "💻", description: "Technology platforms and setup guides", color: "purple" },
                 { id: "grade-challenges", name: "Grade & Handle Challenges", icon: "✅", description: "Assessment, feedback, and problem-solving", color: "warning" }
             ],
@@ -438,7 +440,7 @@
             } else if (resource.file_type === 'External Website') {
                 resourceHTML = `<div class="p-8 text-center"><h1 class="text-3xl font-bold text-hkust-blue mb-2">${resource.title}</h1><p class="text-gray-600 max-w-lg mx-auto mb-6">${resource.description}</p><a href="${resource.external_url || '#'}" target="_blank" class="inline-block bg-accent text-white font-semibold px-8 py-3 rounded-lg hover:opacity-90 transition-opacity">🚀 Launch Interactive Resource</a></div><div class="bg-gray-50 p-8 border-t border-gray-200"><div class="flex flex-wrap gap-2 justify-center">${resource.tags.map(tag => `<span class="text-xs font-medium bg-gray-200 text-gray-700 px-2 py-1 rounded-full">${tag}</span>`).join('')}</div></div>`;
             } else { // Default to text-based content
-                resourceHTML = `<div class="p-8">${headerHTML}    <div class="prose prose-lg max-w-none text-gray-800 pt-8 border-t border-gray-200">
+                resourceHTML = `<div class="p-8">${headerHTML}<div class="prose prose-lg max-w-none text-gray-800 pt-8 border-t border-gray-200">
         <h2>Key Guidelines</h2>
         <p>When a student disputes a grade, the primary goal is to maintain a constructive and professional dialogue. It's an opportunity for clarification, not confrontation. This guide provides steps and scripted examples to navigate these conversations effectively.</p>
         
@@ -567,4 +569,3 @@
     </script>
 </body>
 </html>
-�
