@@ -36,6 +36,7 @@
         /* Small CSS additions for polish */
         .page { display: none; }
         .page.active { display: block; }
+        #resource-modal { transition: opacity 0.3s ease; }
         .tag-filter.active, .category-btn.active.featured { background-color: #003366; color: white; border-color: #003366; }
         .category-btn.active.start-journey { background-color: #4CAF50; color: white; border-color: #4CAF50; }
         .category-btn.active.teach-engage { background-color: #2196F3; color: white; border-color: #2196F3; }
@@ -166,19 +167,6 @@
                 <p>Try adjusting your filters or search terms.</p>
             </div>
         </section>
-
-        <!-- Resource Detail Page -->
-        <section id="resource-page" class="page">
-            <div class="max-w-4xl mx-auto">
-                <button onclick="goBack()" class="flex items-center gap-2 text-hkust-blue font-medium mb-8 hover:underline">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-                    Back to Library
-                </button>
-                <div id="resource-page-content">
-                    <!-- Dynamic resource content will be injected here -->
-                </div>
-            </div>
-        </section>
         
         <!-- Useful Links Page -->
         <section id="links" class="page">
@@ -212,22 +200,37 @@
                     </ul>
                     
                     <h3 class="text-hkust-blue font-bold">Acknowledgments</h3>
-                    <p class="mb-6">Special thanks to all the TACs in the Graduate Teaching Assistant Coordinator Commiitee 2025 who contributed materials, feedback, and expertise to make this resource hub possible. This is a community effort, by the community, for the community.</p>
+                    <p class="mb-6">Special thanks to all the GTAs, faculty members, and staff who contributed materials, feedback, and expertise to make this resource hub possible. This is a community effort, by the community, for the community.</p>
                     
-                    
+                    <h3 class="text-hkust-blue font-bold">Support</h3>
+                    <p>For technical support, suggestions, or to contribute new resources, please contact the <strong>Center for Education Innovation (CEI)</strong> at HKUST.</p>
                 </div>
             </div>
         </section>
-
     </main>
 
+    <!-- Resource Detail Modal -->
+    <div id="resource-modal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-[100] hidden">
+        <!-- Modal content -->
+        <div id="modal-panel" class="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[90vh] flex flex-col">
+            <div class="flex justify-between items-center p-4 border-b border-gray-200 flex-shrink-0">
+                <h3 class="font-bold text-lg text-hkust-blue">Resource Details</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-hkust-blue transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div id="modal-content" class="p-8 overflow-y-auto">
+                <!-- Dynamic resource content will be injected here -->
+            </div>
+        </div>
+    </div>
+
     <script>
-        // --- DATA ---
-        // In a real application, this would be fetched from a PHP API
+        // --- DATA (Hardcoded for prototype version) ---
         const appData = {
             categories: [
                 { id: "start-journey", name: "Start Your GTA Journey", icon: "🚀", description: "Essential foundations for new GTAs", color: "success" },
-                { id: "teach-engage", name: "Teach & Engage Students", icon: "🎯", description: "Classroom interaction and student engagement", color: "info" },
+                { id: "teach-engage", name: "Teach & Engage Students", icon: "�", description: "Classroom interaction and student engagement", color: "info" },
                 { id: "master-tools", name: "Master Teaching Tools", icon: "💻", description: "Technology platforms and setup guides", color: "purple" },
                 { id: "grade-challenges", name: "Grade & Handle Challenges", icon: "✅", description: "Assessment, feedback, and problem-solving", color: "warning" }
             ],
@@ -240,16 +243,16 @@
                 { id: 6, title: "HKUST IT Services", description: "Technical support, software downloads, and IT resources.", url: "https://itsc.hkust.edu.hk", category: "Technical Support", icon: "💻" },
             ],
             resources: [
-                { id: 1, title: "Surviving Office Hours", description: "Six quick best-practice tips for running TA office hours.", category_id: "teach-engage", contributor: "GTA Training Team", file_type: "PDF", file_path: "#", tags: ["Office Hours", "Best Practices", "Student Communication", "Quick Reference"], is_featured: true, difficulty_level: "Beginner", estimated_read_time: "5 minutes", upload_date: "2024-01-15" },
-                { id: 2, title: "Building Effective Working Relationships with Instructors", description: "How to collaborate with course instructors; advice for Finance GTAs.", category_id: "start-journey", contributor: "Finance Department", file_type: "PDF", file_path: "#", tags: ["Finance", "Course Setup", "Best Practices", "Step-by-Step Guide"], is_featured: true, difficulty_level: "Beginner", estimated_read_time: "10 minutes", upload_date: "2024-01-20" },
-                { id: 3, title: "Canvas Quick Guide for GTAs", description: "Cheat-sheet on login, TA roles, assignments, SpeedGrader, and more.", category_id: "master-tools", contributor: "EdTech Team", file_type: "PDF", file_path: "#", tags: ["Canvas", "Quick Reference", "Technology Setup", "Checklist"], is_featured: true, difficulty_level: "Beginner", estimated_read_time: "8 minutes", upload_date: "2024-01-25" },
-                { id: 4, title: "How to Respond to Grade Disputes", description: "Three scripted scenarios for handling grade-appeal conversations.", category_id: "grade-challenges", contributor: "Academic Standards Team", file_type: "Text", tags: ["Grading", "Student Communication", "Best Practices"], is_featured: false, difficulty_level: "Intermediate", estimated_read_time: "12 minutes", upload_date: "2024-02-01" },
-                { id: 5, title: "TA Feedback Guidelines Training", description: "Web-based micro-course with modules on rubrics and scenarios.", category_id: "grade-challenges", contributor: "CEI", file_type: "External Website", external_url: "#", tags: ["Grading", "Interactive Training", "Best Practices"], is_featured: true, difficulty_level: "Intermediate", estimated_read_time: "30 minutes", upload_date: "2024-03-01" },
-                { id: 6, title: "Record Attendance with QR Codes", description: "Walkthrough for QR-based sign-in and pushing scores to Canvas.", category_id: "master-tools", contributor: "EdTech Team", file_type: "PDF", file_path: "#", tags: ["QR Codes", "Canvas", "Qualtrics", "Step-by-Step Guide"], is_featured: false, difficulty_level: "Advanced", estimated_read_time: "18 minutes", upload_date: "2024-02-20" }
+                { id: 1, title: "Surviving Office Hours", description: "Six quick best-practice tips for running TA office hours.", category_id: "teach-engage", contributor: "GTA Training Team", file_type: "PDF", file_path: "#", tags: ["Office Hours", "Best Practices", "Student Communication", "Quick Reference"], is_featured: true, estimated_read_time: "5 minutes", upload_date: "2024-01-15" },
+                { id: 2, title: "Building Effective Working Relationships with Instructors", description: "How to collaborate with course instructors; advice for Finance GTAs.", category_id: "start-journey", contributor: "Finance Department", file_type: "PDF", file_path: "#", tags: ["Finance", "Course Setup", "Best Practices", "Step-by-Step Guide"], is_featured: true, estimated_read_time: "10 minutes", upload_date: "2024-01-20" },
+                { id: 3, title: "Canvas Quick Guide for GTAs", description: "Cheat-sheet on login, TA roles, assignments, SpeedGrader, and more.", category_id: "master-tools", contributor: "EdTech Team", file_type: "PDF", file_path: "#", tags: ["Canvas", "Quick Reference", "Technology Setup", "Checklist"], is_featured: true, estimated_read_time: "8 minutes", upload_date: "2024-01-25" },
+                { id: 4, title: "How to Respond to Grade Disputes", description: "Three scripted scenarios for handling grade-appeal conversations.", category_id: "grade-challenges", contributor: "Academic Standards Team", file_type: "Text", tags: ["Grading", "Student Communication", "Best Practices"], is_featured: false, estimated_read_time: "12 minutes", upload_date: "2024-02-01" },
+                { id: 5, title: "TA Feedback Guidelines Training", description: "Web-based micro-course with modules on rubrics and scenarios.", category_id: "grade-challenges", contributor: "CEI", file_type: "External Website", external_url: "#", tags: ["Grading", "Interactive Training", "Best Practices"], is_featured: true, estimated_read_time: "30 minutes", upload_date: "2024-03-01" },
+                { id: 6, title: "Record Attendance with QR Codes", description: "Walkthrough for QR-based sign-in and pushing scores to Canvas.", category_id: "master-tools", contributor: "EdTech Team", file_type: "PDF", file_path: "#", tags: ["QR Codes", "Canvas", "Qualtrics", "Step-by-Step Guide"], is_featured: false, estimated_read_time: "18 minutes", upload_date: "2024-02-20" }
             ]
         };
-
-        // --- GLOBAL STATE ---
+        
+        // --- GLOBAL APP STATE ---
         let currentFilters = {
             search: '',
             category: '',
@@ -266,54 +269,62 @@
 
         function initializeApp() {
             setupEventListeners();
-            loadCategories();
-            loadUsefulLinks();
-            loadFilters();
-            loadLinkFilters();
+            loadDynamicContent();
 
             const hash = window.location.hash.substring(1);
-            if (hash && document.getElementById(hash)) {
-                showSection(hash);
-            } else {
-                showSection('home');
-            }
+            showSection(hash || 'home');
         }
 
         // --- EVENT LISTENERS ---
         function setupEventListeners() {
+            // Main navigation
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
-                    const section = e.target.getAttribute('data-section');
-                    showSection(section);
+                    showSection(e.target.dataset.section);
                     document.getElementById('mobile-menu').classList.add('hidden');
                 });
             });
 
+            // Mobile menu
             document.getElementById('mobile-menu-btn').addEventListener('click', () => {
                 document.getElementById('mobile-menu').classList.toggle('hidden');
             });
             
+            // Search
             document.getElementById('home-search-btn').addEventListener('click', performHomeSearch);
-            document.getElementById('home-search').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') performHomeSearch();
-            });
+            document.getElementById('home-search').addEventListener('keypress', (e) => { if (e.key === 'Enter') performHomeSearch(); });
             document.getElementById('library-search').addEventListener('input', () => {
                 currentFilters.search = document.getElementById('library-search').value;
                 applyFiltersAndRender();
             });
             
+            // Filters
             document.getElementById('clear-filters-btn').addEventListener('click', clearAllFilters);
-            
             document.getElementById('sort-select').addEventListener('change', (e) => {
                 currentSort = e.target.value;
                 applyFiltersAndRender();
+            });
+
+            // Modal closing
+            const modal = document.getElementById('resource-modal');
+            modal.addEventListener('click', (e) => {
+                if (e.target.id === 'resource-modal') closeModal();
+            });
+            document.addEventListener('keydown', (e) => {
+                if (e.key === "Escape") closeModal();
             });
         }
 
         // --- PAGE/SECTION MANAGEMENT ---
         function showSection(sectionId) {
             document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
-            document.getElementById(sectionId)?.classList.add('active');
+            const activePage = document.getElementById(sectionId);
+            if (activePage) {
+                activePage.classList.add('active');
+            } else {
+                 document.getElementById('home').classList.add('active');
+                 sectionId = 'home';
+            }
 
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 const isActive = btn.dataset.section === sectionId;
@@ -321,11 +332,17 @@
                 btn.classList.toggle('text-hkust-blue', isActive);
             });
             
-            if (sectionId === 'library') {
-                applyFiltersAndRender();
-            }
+            if (sectionId === 'library') applyFiltersAndRender();
+            if (sectionId === 'links') loadUsefulLinks();
 
             window.history.pushState(null, '', '#' + sectionId);
+        }
+
+        function loadDynamicContent() {
+            loadCategories();
+            loadUsefulLinks();
+            loadFilters();
+            loadLinkFilters();
         }
 
         // --- DYNAMIC CONTENT RENDERING ---
@@ -345,11 +362,7 @@
         function loadUsefulLinks() {
             const grid = document.getElementById('useful-links-grid');
             if(!grid) return;
-            
-            const filteredLinks = appData.usefulLinks.filter(link => 
-                currentLinkFilter === 'All' || link.category === currentLinkFilter
-            );
-
+            const filteredLinks = appData.usefulLinks.filter(link => currentLinkFilter === 'All' || link.category === currentLinkFilter);
             grid.innerHTML = filteredLinks.map(link => `
                 <a href="${link.url}" target="_blank" rel="noopener noreferrer" class="group block bg-white p-6 rounded-xl border border-gray-200 hover:border-hkust-blue hover:shadow-lg transition-all">
                     <div class="flex items-start gap-4">
@@ -365,29 +378,15 @@
         }
 
         function loadFilters() {
-            // Category filter buttons
             const categoryContainer = document.getElementById('category-buttons');
-            let categoryButtonsHTML = `
-                <button class="category-btn featured flex items-center gap-2 text-sm font-medium px-4 py-2 border-2 border-gray-200 rounded-full hover:border-hkust-blue transition-colors" data-category="featured">
-                    <span>⭐</span>
-                    <span>Featured</span>
-                </button>
-            `;
-            categoryButtonsHTML += appData.categories.map(cat => `
-                <button class="category-btn ${cat.id} flex items-center gap-2 text-sm font-medium px-4 py-2 border-2 border-gray-200 rounded-full hover:border-hkust-blue transition-colors" data-category="${cat.id}">
-                    <span>${cat.icon}</span>
-                    <span>${cat.name}</span>
-                </button>
-            `).join('');
-            categoryContainer.innerHTML = categoryButtonsHTML;
+            let buttonsHTML = `<button class="category-btn featured flex items-center gap-2 text-sm font-medium px-4 py-2 border-2 border-gray-200 rounded-full hover:border-hkust-blue transition-colors" data-category="featured"><span>⭐</span><span>Featured</span></button>`;
+            buttonsHTML += appData.categories.map(cat => `<button class="category-btn ${cat.id} flex items-center gap-2 text-sm font-medium px-4 py-2 border-2 border-gray-200 rounded-full hover:border-hkust-blue transition-colors" data-category="${cat.id}"><span>${cat.icon}</span><span>${cat.name}</span></button>`).join('');
+            categoryContainer.innerHTML = buttonsHTML;
             document.querySelectorAll('.category-btn').forEach(btn => btn.addEventListener('click', () => toggleCategory(btn.dataset.category)));
 
-            // Tag filter buttons
             const allTags = [...new Set(appData.resources.flatMap(r => r.tags))].sort();
             const tagContainer = document.getElementById('tag-filters');
-            tagContainer.innerHTML = allTags.map(tag => `
-                <button class="tag-filter text-xs font-medium px-3 py-1 border border-gray-300 rounded-full hover:bg-gray-200 transition-colors" data-tag="${tag}">${tag}</button>
-            `).join('');
+            tagContainer.innerHTML = allTags.map(tag => `<button class="tag-filter text-xs font-medium px-3 py-1 border border-gray-300 rounded-full hover:bg-gray-200 transition-colors" data-tag="${tag}">${tag}</button>`).join('');
             document.querySelectorAll('.tag-filter').forEach(btn => btn.addEventListener('click', () => toggleTag(btn.dataset.tag)));
         }
         
@@ -395,24 +394,17 @@
             const container = document.getElementById('useful-links-filters');
             if(!container) return;
             const linkCategories = ['All', ...new Set(appData.usefulLinks.map(link => link.category))];
-            container.innerHTML = linkCategories.map(cat => `
-                <button class="link-filter-btn px-4 py-2 text-sm font-medium rounded-full transition-colors ${cat === 'All' ? 'active' : 'bg-white text-gray-700 hover:bg-gray-100'}" data-category="${cat}">
-                    ${cat}
-                </button>
-            `).join('');
-            
+            container.innerHTML = linkCategories.map(cat => `<button class="link-filter-btn px-4 py-2 text-sm font-medium rounded-full transition-colors ${cat === 'All' ? 'active' : 'bg-white text-gray-700 hover:bg-gray-100'}" data-category="${cat}">${cat}</button>`).join('');
             document.querySelectorAll('.link-filter-btn').forEach(btn => btn.addEventListener('click', () => {
                 currentLinkFilter = btn.dataset.category;
-                document.querySelectorAll('.link-filter-btn').forEach(b => b.classList.remove('active', 'bg-white', 'text-gray-700', 'hover:bg-gray-100'));
+                document.querySelectorAll('.link-filter-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 loadUsefulLinks();
             }));
         }
         
         function displayResources(resourcesToDisplay) {
-            const grid = document.getElementById('resource-library-grid');
-            grid.innerHTML = resourcesToDisplay.map(res => {
-                return `
+            document.getElementById('resource-library-grid').innerHTML = resourcesToDisplay.map(res => `
                 <div onclick="viewResource(${res.id})" class="bg-white p-6 rounded-xl border border-gray-200 flex flex-col hover:shadow-lg hover:border-hkust-blue transition-all cursor-pointer">
                     <div class="flex-grow">
                         ${res.is_featured ? '<div class="text-xs font-bold text-amber-600 mb-2">⭐ FEATURED</div>' : ''}
@@ -428,86 +420,54 @@
                             <span>${res.estimated_read_time}</span>
                         </div>
                     </div>
-                </div>
-            `}).join('');
+                </div>`).join('');
         }
 
         function viewResource(resourceId) {
             const resource = appData.resources.find(r => r.id === resourceId);
             if (!resource) return;
+            
+            const modalContent = document.getElementById('modal-content');
             const category = appData.categories.find(c => c.id === resource.category_id);
-            const contentContainer = document.getElementById('resource-page-content');
             let resourceHTML = '';
 
-            const headerHTML = `
-                <h1 class="text-3xl font-bold text-hkust-blue mb-2">${resource.title}</h1>
-                <p class="text-gray-600 mb-6">${resource.description}</p>
-                <div class="flex flex-wrap gap-2 mb-6">
-                    ${resource.tags.map(tag => `<span class="text-xs font-medium bg-gray-100 text-gray-600 px-2 py-1 rounded-full">${tag}</span>`).join('')}
-                </div>
-                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-center mb-6">
-                    <div><div class="text-gray-400">Category</div><div class="font-semibold text-gray-700">${category ? category.name : 'N/A'}</div></div>
-                    <div><div class="text-gray-400">Contributor</div><div class="font-semibold text-gray-700">${resource.contributor}</div></div>
-                    <div><div class="text-gray-400">Format</div><div class="font-semibold text-gray-700">${resource.file_type}</div></div>
-                    <div><div class="text-gray-400">Read Time</div><div class="font-semibold text-gray-700">${resource.estimated_read_time}</div></div>
-                </div>
-            `;
+            const headerHTML = `<h1 class="text-2xl lg:text-3xl font-bold text-hkust-blue mb-2">${resource.title}</h1><p class="text-gray-600 mb-6">${resource.description}</p><div class="flex flex-wrap gap-2 mb-6">${resource.tags.map(tag => `<span class="text-xs font-medium bg-gray-100 text-gray-600 px-2 py-1 rounded-full">${tag}</span>`).join('')}</div><div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-center"><div><div class="text-gray-400">Category</div><div class="font-semibold text-gray-700">${category ? category.name : 'N/A'}</div></div><div><div class="text-gray-400">Contributor</div><div class="font-semibold text-gray-700">${resource.contributor}</div></div><div><div class="text-gray-400">Format</div><div class="font-semibold text-gray-700">${resource.file_type}</div></div><div><div class="text-gray-400">Read Time</div><div class="font-semibold text-gray-700">${resource.estimated_read_time}</div></div></div>`;
             
             if (resource.file_type === 'PDF') {
-                resourceHTML = `
-                    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-                        <div class="p-8">${headerHTML}</div>
-                        <div class="bg-gray-50 p-8 text-center border-t border-gray-200">
-                             <div class="text-6xl mb-4">📄</div>
-                             <h3 class="text-xl font-bold text-hkust-blue mb-2">PDF Resource</h3>
-                             <p class="text-gray-600 max-w-md mx-auto mb-6">This resource is a downloadable PDF. Click the button below to open it in a new tab.</p>
-                             <a href="${resource.file_path}" target="_blank" class="inline-block bg-hkust-blue text-white font-semibold px-8 py-3 rounded-lg hover:bg-hkust-blue-light transition-colors">
-                                View PDF
-                            </a>
-                        </div>
-                    </div>
-                `;
+                resourceHTML = `<div class="p-8">${headerHTML}</div><div class="bg-gray-50 p-8 text-center border-t border-gray-200"><div class="text-6xl mb-4">📄</div><h3 class="text-xl font-bold text-hkust-blue mb-2">PDF Resource</h3><p class="text-gray-600 max-w-md mx-auto mb-6">This resource is a downloadable PDF. Click the button below to open it in a new tab.</p><a href="${resource.file_path || '#'}" target="_blank" class="inline-block bg-hkust-blue text-white font-semibold px-8 py-3 rounded-lg hover:bg-hkust-blue-light transition-colors">View PDF</a></div>`;
             } else if (resource.file_type === 'External Website') {
-                resourceHTML = `
-                     <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden text-center">
-                        <div class="p-8">
-                            <h1 class="text-3xl font-bold text-hkust-blue mb-2">${resource.title}</h1>
-                            <p class="text-gray-600 max-w-lg mx-auto mb-6">${resource.description}</p>
-                             <a href="${resource.external_url}" target="_blank" class="inline-block bg-accent text-white font-semibold px-8 py-3 rounded-lg hover:opacity-90 transition-opacity">
-                                🚀 Launch Interactive Resource
-                            </a>
-                        </div>
-                         <div class="bg-gray-50 p-8 border-t border-gray-200">
-                             <div class="flex flex-wrap gap-2 justify-center">
-                                ${resource.tags.map(tag => `<span class="text-xs font-medium bg-gray-200 text-gray-700 px-2 py-1 rounded-full">${tag}</span>`).join('')}
-                            </div>
-                        </div>
-                    </div>
-                `;
+                resourceHTML = `<div class="p-8 text-center"><h1 class="text-3xl font-bold text-hkust-blue mb-2">${resource.title}</h1><p class="text-gray-600 max-w-lg mx-auto mb-6">${resource.description}</p><a href="${resource.external_url || '#'}" target="_blank" class="inline-block bg-accent text-white font-semibold px-8 py-3 rounded-lg hover:opacity-90 transition-opacity">🚀 Launch Interactive Resource</a></div><div class="bg-gray-50 p-8 border-t border-gray-200"><div class="flex flex-wrap gap-2 justify-center">${resource.tags.map(tag => `<span class="text-xs font-medium bg-gray-200 text-gray-700 px-2 py-1 rounded-full">${tag}</span>`).join('')}</div></div>`;
             } else { // Default to text-based content
-                resourceHTML = `
-                    <div class="bg-white p-8 md:p-12 rounded-2xl border border-gray-200 shadow-sm">
-                        ${headerHTML}
-                        <div class="prose prose-lg max-w-none text-gray-800 pt-8 border-t border-gray-200">
-                            <h2>Key Guidelines</h2>
-                            <p>This section would contain the full text of the resource, formatted for easy reading. It supports standard HTML elements like headers, paragraphs, and lists.</p>
-                            <ul>
-                                <li>Guideline one: Maintain fairness and neutrality.</li>
-                                <li>Guideline two: Use provided rubrics for consistent grading.</li>
-                                <li>Guideline three: Document student interactions and feedback.</li>
-                            </ul>
-                            <h3>Example Scenario</h3>
-                            <p>Imagine a student disputes a grade. Your first step should be to listen calmly to their perspective before reviewing the rubric and your feedback together. This approach de-escalates tension and focuses on learning.</p>
-                        </div>
-                    </div>
-                `;
+                resourceHTML = `<div class="p-8">${headerHTML}    <div class="prose prose-lg max-w-none text-gray-800 pt-8 border-t border-gray-200">
+        <h2>Key Guidelines</h2>
+        <p>When a student disputes a grade, the primary goal is to maintain a constructive and professional dialogue. It's an opportunity for clarification, not confrontation. This guide provides steps and scripted examples to navigate these conversations effectively.</p>
+        
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse id elit vitae libero faucibus pretium. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Curabitur maximus, est eu varius scelerisque, velit magna mollisVLOREM.</p>
+
+        <ul>
+            <li><strong>Listen First:</strong> Always begin by listening to the student's full perspective without interruption. Understand their reasoning before you respond.</li>
+            <li><strong>Refer to the Rubric:</strong> The grading rubric is your most objective tool. Frame the conversation around the rubric's specific criteria and how the student's work met (or did not meet) them.</li>
+            <li><strong>Be Prepared to Explain:</strong> Have your feedback and the student's submission ready. Be prepared to walk through your reasoning calmly and clearly.</li>
+            <li><strong>Know the Escalation Path:</strong> Understand the official procedure for formal grade appeals and be able to explain it to the student if necessary.</li>
+        </ul>
+
+        <h3>Example Scenario: The "Close Call" Grade</h3>
+        <p>A student receives an 89 (B+) and argues they deserve a 90 (A-). In this case, do not focus on the single point. Instead, review the rubric criteria for "A-level" work and compare it to their submission. Explain what was missing to achieve that higher level, focusing on the learning outcomes rather than the numerical score.</p>
+        
+        <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. This additional text is here to demonstrate how a scrollbar would appear inside the modal if the content becomes very long, ensuring the user can still read everything without issue.</p>
+    </div>
+</div>`;
             }
 
-            contentContainer.innerHTML = resourceHTML;
-            showSection('resource-page');
-            window.scrollTo(0, 0);
+            modalContent.innerHTML = resourceHTML;
+            document.getElementById('resource-modal').classList.remove('hidden');
         }
         
+        function closeModal() {
+            document.getElementById('resource-modal').classList.add('hidden');
+            document.getElementById('modal-content').innerHTML = ''; // Clear content
+        }
+
         // --- FILTERING & SORTING LOGIC ---
         function performHomeSearch() {
             currentFilters.search = document.getElementById('home-search').value;
@@ -524,10 +484,10 @@
         function toggleCategory(categoryId) {
             if (categoryId === 'featured') {
                 currentFilters.showFeatured = !currentFilters.showFeatured;
-                currentFilters.category = ''; // Deselect regular categories
+                currentFilters.category = '';
             } else {
                 currentFilters.category = currentFilters.category === categoryId ? '' : categoryId;
-                currentFilters.showFeatured = false; // Deselect featured
+                currentFilters.showFeatured = false;
             }
             applyFiltersAndRender();
         }
@@ -558,7 +518,7 @@
             noResults.style.display = 'none';
 
             setTimeout(() => {
-                let filtered = [...appData.resources];
+                let filtered = appData.resources ? [...appData.resources] : [];
 
                 if (currentFilters.showFeatured) {
                     filtered = filtered.filter(res => res.is_featured);
@@ -604,11 +564,7 @@
                 btn.classList.toggle('active', currentFilters.tags.includes(btn.dataset.tag));
             });
         }
-        
-        function goBack() {
-            showSection('library');
-        }
-
     </script>
 </body>
 </html>
+�
